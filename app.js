@@ -4,9 +4,32 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var Session = require('express-session');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
+
+// create a seneca instance
+var seneca = require('seneca')();
+
+// load configuration for plugins
+// top level properties match plugin names
+// copy template config.template.js to config.mine.js and customize
+var options = seneca.options('config.mine.js');
+
+// use the user, auth and entity plugins
+// the user plugin gives you user account business logic
+seneca.use('user');
+
+
+// the auth plugin handles HTTP authentication
+seneca.use('auth', options.auth);
+
+// the entity plugin provides an active-record like orm
+seneca.use('entity');
+
+// the local-auth handles local auth strategy
+seneca.use('local-auth');
 
 var app = express();
 
@@ -21,6 +44,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Use in-memory sessions so OAuth will work
+// In production, use redis or similar
+app.use(Session({secret: 'seneca'}));
+
+// add seneca middleware
+app.use(seneca.export('web'));
 
 app.use('/', index);
 app.use('/users', users);
