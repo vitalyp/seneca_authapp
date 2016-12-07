@@ -1,3 +1,5 @@
+var DB_NAME = "seneca_authapp";
+
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -24,6 +26,10 @@ seneca.use('user');
 
 // the auth plugin handles HTTP authentication
 seneca.use('auth', options.auth);
+
+seneca.use('mongo-store', {
+  uri: 'mongodb://localhost:27017/' + DB_NAME
+});
 
 // the entity plugin provides an active-record like orm
 seneca.use('entity');

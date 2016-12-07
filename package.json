@@ -19,6 +19,7 @@
     "seneca-auth": "^1.0.1",
     "seneca-entity": "0.0.1",
     "seneca-local-auth": "^0.1.2",
-    "seneca-user": "^1.0.1"
+    "seneca-user": "^1.0.1",
+    "seneca-mongo-store": "1.1.0"
   }
 }
